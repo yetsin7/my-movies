@@ -103,6 +103,7 @@
   <section id="playerOverlay" class="player-overlay hidden">
     <video id="videoPlayer" playsinline></video>
     <div id="playerShade" class="player-shade"></div>
+    <div id="playbackNotice" class="playback-notice hidden"></div>
     <div class="player-top">
       <button id="playerClose" class="player-close" aria-label="Volver">←</button>
       <div>
@@ -123,6 +124,7 @@
           <span id="timeLabel">0:00 / 0:00</span>
         </div>
         <div class="control-right">
+          <select id="audioSelect" class="track-select hidden" aria-label="Pista de audio"></select>
           <button id="subtitleButton" class="control-pill">CC</button>
           <select id="subtitleSelect" class="track-select"><option value="">Subtítulos</option></select>
           <button id="fullscreenButton" aria-label="Pantalla completa">⛶</button>
