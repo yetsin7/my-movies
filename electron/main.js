@@ -37,6 +37,14 @@ function publicState() {
   };
 }
 
+function sendScanComplete() {
+  mainWindow?.webContents.send('library:scan-progress', {
+    done: library.state.movies.length,
+    total: library.state.movies.length,
+    complete: true
+  });
+}
+
 async function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1500,
@@ -77,11 +85,7 @@ app.whenReady().then(async () => {
   await createWindow();
 
   if (library.state.folders.length && !library.state.movies.length) {
-    library.scan().then(() => mainWindow?.webContents.send('library:scan-progress', {
-      done: library.state.movies.length,
-      total: library.state.movies.length,
-      complete: true
-    }));
+    library.scan().then(sendScanComplete);
   }
 });
 
@@ -101,17 +105,16 @@ ipcMain.handle('library:choose', async () => {
     properties: ['openDirectory', 'multiSelections']
   });
   if (result.canceled || !result.filePaths.length) return publicState();
-  await library.setFolders(result.filePaths);
+
+  const merged = [...new Set([...(library.state.folders || []), ...result.filePaths])];
+  await library.setFolders(merged);
+  sendScanComplete();
   return publicState();
 });
 
 ipcMain.handle('library:rescan', async () => {
   await library.scan();
-  mainWindow?.webContents.send('library:scan-progress', {
-    done: library.state.movies.length,
-    total: library.state.movies.length,
-    complete: true
-  });
+  sendScanComplete();
   return publicState();
 });
 
