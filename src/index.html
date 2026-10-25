@@ -8,52 +8,68 @@
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
+  <header id="topbar" class="topbar">
+    <div class="brand" aria-label="My Movies">
       <span class="brand-mark">M</span>
-      <span>MY MOVIES</span>
+      <div class="brand-copy"><strong>MY MOVIES</strong><small>LOCAL CINEMA</small></div>
     </div>
-    <nav>
+    <nav aria-label="Navegación principal">
       <button class="nav-link active" data-view="home">Inicio</button>
       <button class="nav-link" data-view="favorites">Mi lista</button>
       <button class="nav-link" data-view="recent">Recientes</button>
     </nav>
     <div class="top-actions">
       <label class="search">
-        <span>⌕</span>
-        <input id="searchInput" type="search" placeholder="Títulos y archivos" />
+        <span class="search-icon">⌕</span>
+        <input id="searchInput" type="search" placeholder="Buscar en tu biblioteca" aria-label="Buscar" />
+        <kbd>Ctrl K</kbd>
       </label>
-      <button id="rescanButton" class="icon-button" title="Volver a analizar">↻</button>
-      <button id="libraryButton" class="primary small">+ Carpetas</button>
+      <button id="rescanButton" class="icon-button" title="Volver a analizar" aria-label="Volver a analizar">↻</button>
+      <button id="libraryButton" class="primary small">＋ Carpetas</button>
     </div>
   </header>
 
   <main id="app">
     <section id="emptyState" class="empty hidden">
+      <div class="empty-glow"></div>
       <div class="empty-card">
         <span class="brand-mark big">M</span>
-        <h1>Tu cine. En tu computadora.</h1>
-        <p>Selecciona una o varias carpetas. My Movies organizará tus videos, generará imágenes de portada y conservará tu progreso de reproducción.</p>
-        <button id="emptyLibraryButton" class="primary">Elegir carpetas</button>
+        <span class="eyebrow">TU BIBLIOTECA · TU EQUIPO · TU CINE</span>
+        <h1>Todo tu cine,<br><span>en un solo lugar.</span></h1>
+        <p>Selecciona tus carpetas de películas. My Movies las organizará, creará vistas previas cinematográficas y recordará exactamente dónde te quedaste.</p>
+        <div class="empty-actions">
+          <button id="emptyLibraryButton" class="primary large">Elegir carpetas</button>
+          <span>100% local · Sin subir archivos</span>
+        </div>
       </div>
     </section>
 
     <section id="libraryView" class="hidden">
       <section id="hero" class="hero">
         <div class="hero-backdrop" id="heroBackdrop"></div>
+        <div class="hero-noise"></div>
         <div class="hero-vignette"></div>
         <div class="hero-copy">
-          <div class="eyebrow">DESTACADA EN TU BIBLIOTECA</div>
+          <div class="hero-kicker"><span class="pulse-dot"></span> SELECCIÓN DESTACADA</div>
           <h1 id="heroTitle"></h1>
-          <p id="heroMeta"></p>
+          <div id="heroBadges" class="hero-badges"></div>
+          <p id="heroMeta" class="hero-meta"></p>
           <div class="hero-actions">
-            <button id="heroPlay" class="play-button">▶ Reproducir</button>
-            <button id="heroInfo" class="secondary">ⓘ Más información</button>
+            <button id="heroPlay" class="play-button large">▶ <span>Reproducir</span></button>
+            <button id="heroInfo" class="secondary large">ⓘ <span>Más información</span></button>
           </div>
         </div>
+        <div class="hero-index"><span id="heroIndex">01</span><small>DESTACADA</small></div>
       </section>
 
       <section class="content">
+        <div class="library-heading">
+          <div>
+            <span class="section-kicker">BIBLIOTECA LOCAL</span>
+            <h2 id="viewTitle">Tu selección</h2>
+          </div>
+          <div id="libraryStats" class="library-stats"></div>
+        </div>
         <div id="scanStatus" class="scan-status hidden"></div>
         <div id="rows"></div>
       </section>
@@ -61,46 +77,55 @@
   </main>
 
   <dialog id="detailsDialog" class="details-dialog">
-    <button class="dialog-close" data-close-dialog>×</button>
+    <button class="dialog-close" data-close-dialog aria-label="Cerrar">×</button>
     <div id="detailsBackdrop" class="details-backdrop"></div>
     <div class="details-content">
       <div class="details-main">
+        <span class="section-kicker">EN TU BIBLIOTECA</span>
         <h2 id="detailsTitle"></h2>
+        <div id="detailsBadges" class="hero-badges compact"></div>
         <p id="detailsMeta" class="muted"></p>
         <div class="details-actions">
           <button id="detailsPlay" class="play-button">▶ Reproducir</button>
-          <button id="favoriteButton" class="round-button">＋</button>
+          <button id="favoriteButton" class="round-button" title="Añadir a Mi lista">＋</button>
         </div>
         <p id="detailsPath" class="path"></p>
       </div>
       <div class="details-grid">
         <div><strong>Audio</strong><span id="audioInfo"></span></div>
         <div><strong>Subtítulos</strong><span id="subtitleInfo"></span></div>
-        <div><strong>Formato</strong><span id="formatInfo"></span></div>
+        <div><strong>Archivo</strong><span id="formatInfo"></span></div>
       </div>
-      <button id="revealButton" class="text-button">Mostrar archivo en el Explorador</button>
+      <button id="revealButton" class="text-button">Abrir ubicación en el Explorador →</button>
     </div>
   </dialog>
 
   <section id="playerOverlay" class="player-overlay hidden">
     <video id="videoPlayer" playsinline></video>
     <div id="playerShade" class="player-shade"></div>
-    <button id="playerClose" class="player-close">←</button>
-    <div class="player-title" id="playerTitle"></div>
+    <div class="player-top">
+      <button id="playerClose" class="player-close" aria-label="Volver">←</button>
+      <div>
+        <span class="player-overline">REPRODUCIENDO</span>
+        <div class="player-title" id="playerTitle"></div>
+      </div>
+    </div>
     <div class="player-controls">
-      <input id="seekBar" type="range" min="0" max="1000" value="0" />
+      <div class="seek-wrap">
+        <input id="seekBar" type="range" min="0" max="1000" value="0" aria-label="Progreso" />
+      </div>
       <div class="control-row">
         <div class="control-left">
-          <button id="playPause">▶</button>
-          <button id="backTen">↶ 10</button>
-          <button id="forwardTen">10 ↷</button>
-          <button id="muteButton">🔊</button>
+          <button id="playPause" aria-label="Reproducir o pausar">▶</button>
+          <button id="backTen" aria-label="Retroceder 10 segundos">↶ <span>10</span></button>
+          <button id="forwardTen" aria-label="Adelantar 10 segundos"><span>10</span> ↷</button>
+          <button id="muteButton" aria-label="Silenciar">🔊</button>
           <span id="timeLabel">0:00 / 0:00</span>
         </div>
         <div class="control-right">
-          <button id="subtitleButton">CC</button>
+          <button id="subtitleButton" class="control-pill">CC</button>
           <select id="subtitleSelect" class="track-select"><option value="">Subtítulos</option></select>
-          <button id="fullscreenButton">⛶</button>
+          <button id="fullscreenButton" aria-label="Pantalla completa">⛶</button>
         </div>
       </div>
     </div>
