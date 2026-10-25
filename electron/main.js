@@ -23,7 +23,7 @@ function publicMovie(movie) {
     ...movie,
     mediaUrl: asFileUrl(movie.path),
     frames: (movie.frames || []).map(asFileUrl),
-    externalSubtitles: (movie.externalSubtitles || []).map((sub) => ({
+    playableSubtitles: (movie.playableSubtitles || []).map((sub) => ({
       ...sub,
       url: asFileUrl(sub.path)
     }))
@@ -50,6 +50,7 @@ async function createWindow() {
       symbolColor: '#f5f5f5',
       height: 42
     },
+    show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -58,6 +59,7 @@ async function createWindow() {
     }
   });
 
+  mainWindow.once('ready-to-show', () => mainWindow.show());
   await mainWindow.loadFile(path.join(__dirname, '..', 'src', 'index.html'));
 }
 
@@ -70,6 +72,7 @@ app.whenReady().then(async () => {
     ffprobePath: unpacked(ffprobeStatic.path),
     onProgress: (payload) => mainWindow?.webContents.send('library:scan-progress', payload)
   });
+
   await library.load();
   await createWindow();
 
@@ -104,12 +107,12 @@ ipcMain.handle('library:choose', async () => {
 
 ipcMain.handle('library:rescan', async () => {
   await library.scan();
+  mainWindow?.webContents.send('library:scan-progress', {
+    done: library.state.movies.length,
+    total: library.state.movies.length,
+    complete: true
+  });
   return publicState();
-});
-
-ipcMain.handle('movie:previewFrames', (_event, id) => {
-  const movie = library.find(id);
-  return publicMovie(movie)?.frames || [];
 });
 
 ipcMain.handle('movie:info', (_event, id) => publicMovie(library.find(id)));
