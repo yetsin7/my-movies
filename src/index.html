@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' file: data: blob:; style-src 'self' 'unsafe-inline'; img-src 'self' file: data: blob:; media-src 'self' file: blob:; script-src 'self';" />
+  <title>My Movies</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">M</span>
+      <span>MY MOVIES</span>
+    </div>
+    <nav>
+      <button class="nav-link active" data-view="home">Inicio</button>
+      <button class="nav-link" data-view="favorites">Mi lista</button>
+      <button class="nav-link" data-view="recent">Recientes</button>
+    </nav>
+    <div class="top-actions">
+      <label class="search">
+        <span>⌕</span>
+        <input id="searchInput" type="search" placeholder="Títulos y archivos" />
+      </label>
+      <button id="rescanButton" class="icon-button" title="Volver a analizar">↻</button>
+      <button id="libraryButton" class="primary small">+ Carpetas</button>
+    </div>
+  </header>
+
+  <main id="app">
+    <section id="emptyState" class="empty hidden">
+      <div class="empty-card">
+        <span class="brand-mark big">M</span>
+        <h1>Tu cine. En tu computadora.</h1>
+        <p>Selecciona una o varias carpetas. My Movies organizará tus videos, generará imágenes de portada y conservará tu progreso de reproducción.</p>
+        <button id="emptyLibraryButton" class="primary">Elegir carpetas</button>
+      </div>
+    </section>
+
+    <section id="libraryView" class="hidden">
+      <section id="hero" class="hero">
+        <div class="hero-backdrop" id="heroBackdrop"></div>
+        <div class="hero-vignette"></div>
+        <div class="hero-copy">
+          <div class="eyebrow">DESTACADA EN TU BIBLIOTECA</div>
+          <h1 id="heroTitle"></h1>
+          <p id="heroMeta"></p>
+          <div class="hero-actions">
+            <button id="heroPlay" class="play-button">▶ Reproducir</button>
+            <button id="heroInfo" class="secondary">ⓘ Más información</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div id="scanStatus" class="scan-status hidden"></div>
+        <div id="rows"></div>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="detailsDialog" class="details-dialog">
+    <button class="dialog-close" data-close-dialog>×</button>
+    <div id="detailsBackdrop" class="details-backdrop"></div>
+    <div class="details-content">
+      <div class="details-main">
+        <h2 id="detailsTitle"></h2>
+        <p id="detailsMeta" class="muted"></p>
+        <div class="details-actions">
+          <button id="detailsPlay" class="play-button">▶ Reproducir</button>
+          <button id="favoriteButton" class="round-button">＋</button>
+        </div>
+        <p id="detailsPath" class="path"></p>
+      </div>
+      <div class="details-grid">
+        <div><strong>Audio</strong><span id="audioInfo"></span></div>
+        <div><strong>Subtítulos</strong><span id="subtitleInfo"></span></div>
+        <div><strong>Formato</strong><span id="formatInfo"></span></div>
+      </div>
+      <button id="revealButton" class="text-button">Mostrar archivo en el Explorador</button>
+    </div>
+  </dialog>
+
+  <section id="playerOverlay" class="player-overlay hidden">
+    <video id="videoPlayer" playsinline></video>
+    <div id="playerShade" class="player-shade"></div>
+    <button id="playerClose" class="player-close">←</button>
+    <div class="player-title" id="playerTitle"></div>
+    <div class="player-controls">
+      <input id="seekBar" type="range" min="0" max="1000" value="0" />
+      <div class="control-row">
+        <div class="control-left">
+          <button id="playPause">▶</button>
+          <button id="backTen">↶ 10</button>
+          <button id="forwardTen">10 ↷</button>
+          <button id="muteButton">🔊</button>
+          <span id="timeLabel">0:00 / 0:00</span>
+        </div>
+        <div class="control-right">
+          <button id="subtitleButton">CC</button>
+          <select id="subtitleSelect" class="track-select"><option value="">Subtítulos</option></select>
+          <button id="fullscreenButton">⛶</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="./renderer.js"></script>
+</body>
+</html>
