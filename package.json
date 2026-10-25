@@ -1,0 +1,54 @@
+{
+  "name": "my-movies",
+  "version": "0.1.0",
+  "description": "Local cinematic media library and player built with Electron.",
+  "main": "electron/main.js",
+  "author": "yetsin7",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "dist": "electron-builder --win nsis",
+    "pack": "electron-builder --dir",
+    "check": "node --check electron/main.js && node --check electron/preload.js && node --check electron/library.js && node --check src/renderer.js"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0"
+  },
+  "devDependencies": {
+    "electron": "^38.2.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.mymovies.desktop",
+    "productName": "My Movies",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/**/*",
+      "src/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/ffmpeg-static/**/*",
+      "node_modules/ffprobe-static/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
