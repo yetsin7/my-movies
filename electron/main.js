@@ -1,4 +1,5 @@
 const path = require('path');
+const { pathToFileURL } = require('url');
 const { app, BrowserWindow, dialog, ipcMain, shell } = require('electron');
 const ffmpegStatic = require('ffmpeg-static');
 const ffprobeStatic = require('ffprobe-static');
@@ -12,15 +13,19 @@ function unpacked(binaryPath) {
   return app.isPackaged ? binaryPath.replace('app.asar', 'app.asar.unpacked') : binaryPath;
 }
 
+function asFileUrl(filePath) {
+  return pathToFileURL(filePath).href;
+}
+
 function publicMovie(movie) {
   if (!movie) return null;
   return {
     ...movie,
-    mediaUrl: 'file://' + encodeURI(movie.path.replace(/\\/g, '/')),
-    frames: (movie.frames || []).map((frame) => 'file://' + encodeURI(frame.replace(/\\/g, '/'))),
+    mediaUrl: asFileUrl(movie.path),
+    frames: (movie.frames || []).map(asFileUrl),
     externalSubtitles: (movie.externalSubtitles || []).map((sub) => ({
       ...sub,
-      url: 'file://' + encodeURI(sub.path.replace(/\\/g, '/'))
+      url: asFileUrl(sub.path)
     }))
   };
 }
