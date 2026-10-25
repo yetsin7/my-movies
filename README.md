@@ -1,28 +1,32 @@
 # My Movies
 
-Una aplicación de escritorio local construida con Electron para organizar y reproducir películas almacenadas en tu propia computadora. La interfaz toma inspiración de los patrones modernos de servicios de streaming (hero cinematográfico, carruseles, previsualizaciones y continuidad), pero usa identidad propia.
+Aplicación de escritorio local construida con Electron para organizar y reproducir películas almacenadas en tu propia computadora. La experiencia visual está inspirada en los patrones premium de servicios de streaming, con identidad propia y funcionamiento completamente local.
 
 ## Funciones actuales
 
-- Selección de una o varias carpetas desde Windows.
+- Selección acumulativa de una o varias carpetas desde Windows.
 - Escaneo recursivo de videos.
-- Compatibilidad de biblioteca con MP4, MKV, MOV, M4V, AVI, WEBM, WMV, FLV, MPEG/MPG, TS/M2TS/MTS y OGV.
-- Lectura de metadatos mediante FFprobe: duración, formato, resolución, codecs, pistas de audio y subtítulos embebidos.
-- Generación automática de 4 fotogramas por película con FFmpeg.
-- Previsualización animada de tarjetas alternando fotogramas.
-- Hero destacado con imagen de la propia película.
-- Búsqueda.
+- Escaneo incremental: los archivos que no cambiaron reutilizan metadatos, miniaturas y subtítulos procesados.
+- Biblioteca compatible con MP4, MKV, MOV, M4V, AVI, WEBM, WMV, FLV, MPEG/MPG, TS/M2TS/MTS y OGV.
+- FFprobe para duración, bitrate, resolución, FPS, codecs, audio, subtítulos y características HDR.
+- Detección de HDR10, HLG y contenido BT.2020 cuando los metadatos lo permiten.
+- Generación automática de 5 fotogramas cinematográficos por película mediante FFmpeg.
+- Previsualización animada de tarjetas.
+- Hero premium con imágenes extraídas de la propia película.
+- Búsqueda rápida con Ctrl+K.
 - Mi lista / favoritos.
-- Agregadas recientemente.
-- Continuar viendo con progreso persistente.
-- Reproductor integrado con play/pause, salto ±10 s, seek, mute, fullscreen y atajos.
-- Detección de subtítulos externos contiguos. Los VTT externos pueden activarse directamente desde el reproductor.
+- Recientes, alta definición, HDR, películas largas y continuar viendo.
+- Progreso persistente y reanudación automática.
+- Reproductor integrado con play/pause, ±10 s, seek, mute y fullscreen.
+- Conversión automática de subtítulos externos SRT/ASS/SSA a WebVTT.
+- Extracción automática a WebVTT de subtítulos embebidos de texto compatibles.
+- Selector de subtítulos directamente en el reproductor.
+- Selector de pista de audio cuando el motor Chromium expone múltiples pistas.
+- Avisos claros cuando un codec no puede reproducirse con el motor integrado.
 - Persistencia de biblioteca, favoritos, progreso y caché en el directorio de datos de Electron.
-- Empaquetado de Windows mediante electron-builder.
+- Empaquetado para Windows con electron-builder.
 
 ## Ejecutar en Windows
-
-Desde CMD o PowerShell:
 
 ```bat
 cd C:\Dev\apps_electron
@@ -32,27 +36,40 @@ npm install
 npm start
 ```
 
-Para construir instalador:
+Si ya lo tienes clonado:
+
+```bat
+cd C:\Dev\apps_electron\my-movies
+git pull
+npm install
+npm start
+```
+
+Para generar instalador:
 
 ```bat
 npm run dist
 ```
 
-El instalador aparecerá en `dist\`.
+El instalador se genera en `dist\`.
 
-## Nota sobre codecs
+## Compatibilidad multimedia
 
-Electron/Chromium puede reproducir de forma nativa muchos videos H.264/AAC, VP8/VP9/Opus y formatos web compatibles. My Movies puede **indexar** muchos contenedores gracias a FFmpeg/FFprobe aunque un codec concreto no sea decodificable de forma nativa por Chromium.
+My Movies usa FFmpeg/FFprobe para analizar prácticamente cualquier archivo habitual de biblioteca local, aunque la reproducción final integrada sigue dependiendo del conjunto de codecs que Chromium/Electron pueda decodificar.
 
-La siguiente evolución prevista es incorporar un backend de reproducción FFmpeg/MPV para conmutación real entre múltiples pistas de audio, subtítulos embebidos ASS/PGS y codecs no soportados por Chromium sin depender del soporte multimedia de Electron.
+Por eso un MKV puede aparecer perfectamente catalogado, con miniaturas, pistas y subtítulos, aunque una combinación concreta como HEVC + TrueHD + PGS no sea reproducible aún por el motor integrado.
+
+La arquitectura está preparada para una futura capa de reproducción nativa basada en MPV/FFmpeg para ampliar la compatibilidad de codecs sin degradar la interfaz Electron.
 
 ## Privacidad
 
-La biblioteca es local. La app no sube películas, nombres de archivos ni historial a ningún servicio externo.
+La biblioteca permanece local. My Movies no sube archivos, títulos, rutas, historial ni miniaturas a servicios externos.
 
 ## Arquitectura
 
-- `electron/main.js`: ventana, IPC, selección de carpetas y estado.
-- `electron/library.js`: escaneo, FFprobe, thumbnails y persistencia.
-- `electron/preload.js`: API segura para el renderer.
-- `src/`: interfaz y reproductor.
+- `electron/main.js`: ventana, IPC, selección de carpetas y exposición segura de medios.
+- `electron/library.js`: escaneo incremental, FFprobe, miniaturas, HDR, preparación de subtítulos y persistencia.
+- `electron/preload.js`: puente seguro entre Electron y el renderer.
+- `src/index.html`: estructura de la experiencia.
+- `src/styles.css`: sistema visual premium.
+- `src/renderer.js`: biblioteca, navegación, player, subtítulos, audio y estados interactivos.
