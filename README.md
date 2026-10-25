@@ -26,32 +26,46 @@ Aplicación de escritorio local construida con Electron para organizar y reprodu
 - Persistencia de biblioteca, favoritos, progreso y caché en el directorio de datos de Electron.
 - Empaquetado para Windows con electron-builder.
 
-## Ejecutar en Windows
+## Ejecutar en Windows con PNPM
+
+Requisitos: Node.js 22 o superior y PNPM 11. El proyecto usa PNPM; no mezcles `npm install` con `pnpm install`.
+
+Clonar e instalar:
 
 ```bat
-cd C:\Dev\apps_electron
+cd /d C:\Dev\apps_electron
 git clone https://github.com/yetsin7/my-movies.git
 cd my-movies
-npm install
-npm start
+pnpm install
+pnpm start
 ```
 
-Si ya lo tienes clonado:
+Si ya está clonado:
 
 ```bat
-cd C:\Dev\apps_electron\my-movies
-git pull
-npm install
-npm start
+cd /d C:\Dev\apps_electron\my-movies
+git pull --ff-only
+pnpm install
+pnpm start
 ```
 
-Para generar instalador:
+Para crear el instalador Windows: `pnpm run dist`. El resultado estará en `dist\`.
+
+### Problemas de conexión (ETIMEDOUT)
+
+Si `pnpm install` muestra `ETIMEDOUT`, es un problema de conexión al registro, DNS, proxy o firewall, no del gestor de paquetes. Comprueba:
 
 ```bat
-npm run dist
+nslookup registry.npmjs.org
+curl -I https://registry.npmjs.org/electron
+pnpm config get registry
+pnpm config get proxy
+pnpm config get https-proxy
 ```
 
-El instalador se genera en `dist\`.
+Con conexión operativa, vuelve a ejecutar `pnpm install`. Si `node_modules` procede de npm y la instalación sigue inconsistente, cierra Electron, elimina únicamente `node_modules` con `rmdir /s /q node_modules` y repite `pnpm install`. No borres el código fuente.
+
+PNPM 11 requiere aprobar explícitamente los scripts de instalación de dependencias. `pnpm-workspace.yaml` autoriza los instaladores necesarios de Electron, FFmpeg y FFprobe; no habilites indiscriminadamente todos los scripts.
 
 ## Compatibilidad multimedia
 
