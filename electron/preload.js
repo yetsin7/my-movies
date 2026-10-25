@@ -4,7 +4,6 @@ contextBridge.exposeInMainWorld('myMovies', {
   chooseLibrary: () => ipcRenderer.invoke('library:choose'),
   getState: () => ipcRenderer.invoke('library:state'),
   rescan: () => ipcRenderer.invoke('library:rescan'),
-  getPreviewFrames: (movieId) => ipcRenderer.invoke('movie:previewFrames', movieId),
   getMediaInfo: (movieId) => ipcRenderer.invoke('movie:info', movieId),
   revealFile: (movieId) => ipcRenderer.invoke('movie:reveal', movieId),
   toggleFavorite: (movieId) => ipcRenderer.invoke('movie:favorite', movieId),
