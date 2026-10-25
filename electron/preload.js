@@ -9,6 +9,11 @@ contextBridge.exposeInMainWorld('myMovies', {
   toggleFavorite: (movieId) => ipcRenderer.invoke('movie:favorite', movieId),
   setProgress: (movieId, seconds, duration) =>
     ipcRenderer.invoke('movie:progress', { movieId, seconds, duration }),
+  onLibraryUpdated: (callback) => {
+    const handler = (_event, payload) => callback(payload);
+    ipcRenderer.on('library:updated', handler);
+    return () => ipcRenderer.removeListener('library:updated', handler);
+  },
   onScanProgress: (callback) => {
     const handler = (_event, payload) => callback(payload);
     ipcRenderer.on('library:scan-progress', handler);

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="140" y1="60" x2="880" y2="980" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff4650"/>
+      <stop offset=".55" stop-color="#d4101b"/>
+      <stop offset="1" stop-color="#7a0008"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ffd6d9"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#3a0004" flood-opacity=".55"/>
+    </filter>
+    <clipPath id="clip"><rect width="1024" height="1024" rx="236"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip)">
+    <rect width="1024" height="1024" fill="url(#bg)"/>
+    <rect width="1024" height="560" fill="url(#sheen)"/>
+    <g fill="#2a0003" fill-opacity=".3"><rect x="90" y="56" width="52" height="52" rx="13"/><rect x="90" y="916" width="52" height="52" rx="13"/><rect x="178" y="56" width="52" height="52" rx="13"/><rect x="178" y="916" width="52" height="52" rx="13"/><rect x="266" y="56" width="52" height="52" rx="13"/><rect x="266" y="916" width="52" height="52" rx="13"/><rect x="354" y="56" width="52" height="52" rx="13"/><rect x="354" y="916" width="52" height="52" rx="13"/><rect x="442" y="56" width="52" height="52" rx="13"/><rect x="442" y="916" width="52" height="52" rx="13"/><rect x="530" y="56" width="52" height="52" rx="13"/><rect x="530" y="916" width="52" height="52" rx="13"/><rect x="618" y="56" width="52" height="52" rx="13"/><rect x="618" y="916" width="52" height="52" rx="13"/><rect x="706" y="56" width="52" height="52" rx="13"/><rect x="706" y="916" width="52" height="52" rx="13"/><rect x="794" y="56" width="52" height="52" rx="13"/><rect x="794" y="916" width="52" height="52" rx="13"/><rect x="882" y="56" width="52" height="52" rx="13"/><rect x="882" y="916" width="52" height="52" rx="13"/></g>
+    <path d="M232 760V264h100l180 256 180-256h100v496H692V452L544 664h-64L332 452v308z" fill="url(#mark)" filter="url(#shadow)"/>
+  </g>
+</svg>
