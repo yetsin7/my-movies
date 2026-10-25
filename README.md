@@ -1,10 +1,16 @@
+<p align="center">
+  <img src="src/assets/logo.svg" alt="My Movies" width="120" />
+</p>
+
 # My Movies
 
 Aplicación de escritorio local construida con Electron para organizar y reproducir películas almacenadas en tu propia computadora. La experiencia visual está inspirada en los patrones premium de servicios de streaming, con identidad propia y funcionamiento completamente local.
 
 ## Funciones actuales
 
-- Selección acumulativa de una o varias carpetas desde Windows.
+- Selección acumulativa de una o varias carpetas desde Windows. Solo se analizan las carpetas que tú elijas; nada se importa automáticamente.
+- Escaneo recursivo de videos en segundo plano: las películas aparecen a medida que se analizan, con progreso visible.
+- Una sola instancia de la aplicación a la vez.
 - Escaneo recursivo de videos.
 - Escaneo incremental: los archivos que no cambiaron reutilizan metadatos, miniaturas y subtítulos procesados.
 - Biblioteca compatible con MP4, MKV, MOV, M4V, AVI, WEBM, WMV, FLV, MPEG/MPG, TS/M2TS/MTS y OGV.
@@ -50,6 +56,22 @@ pnpm start
 ```
 
 Para crear el instalador Windows: `pnpm run dist`. El resultado estará en `dist\`.
+
+### FFmpeg
+
+My Movies usa FFmpeg y FFprobe del sistema para analizar videos y generar miniaturas. Búscalos primero en `%LOCALAPPDATA%\Microsoft\WinGet\Links` y después en el `PATH`. Si no los tienes:
+
+```bat
+winget install Gyan.FFmpeg
+```
+
+### Identidad visual
+
+El logotipo se define en un único SVG dentro de `scripts/generate-icons.js`. Para regenerar todos los recursos (`src/assets/logo.svg`, `src/assets/icon.png`, `build/icon.ico`, `build/icon.png` y la barra lateral del instalador) ejecuta:
+
+```bat
+pnpm run icons
+```
 
 ### Problemas de conexión (ETIMEDOUT)
 

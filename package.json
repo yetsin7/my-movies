@@ -11,15 +11,12 @@
     "dev": "electron .",
     "dist": "electron-builder --win nsis",
     "pack": "electron-builder --dir",
-    "check": "node --check electron/main.js && node --check electron/preload.js && node --check electron/library.js && node --check src/renderer.js"
-  },
-  "dependencies": {
-    "ffmpeg-static": "^5.2.0",
-    "ffprobe-static": "^3.1.0"
+    "icons": "electron scripts/generate-icons.js",
+    "check": "node --check electron/main.js && node --check electron/preload.js && node --check electron/library.js && node --check electron/media-probe.js && node --check scripts/generate-icons.js && node --check src/renderer.js"
   },
   "devDependencies": {
-    "electron": "^38.2.0",
-    "electron-builder": "^26.0.12"
+    "electron": "^39.8.10",
+    "electron-builder": "26.15.3"
   },
   "build": {
     "appId": "com.mymovies.desktop",
@@ -37,6 +34,7 @@
       "node_modules/ffprobe-static/**/*"
     ],
     "win": {
+      "icon": "build/icon.ico",
       "target": [
         {
           "target": "nsis",
@@ -50,7 +48,16 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "shortcutName": "My Movies",
+      "uninstallDisplayName": "My Movies",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico",
+      "installerSidebar": "build/installerSidebar.bmp",
+      "uninstallerSidebar": "build/installerSidebar.bmp",
+      "language": "3082",
+      "deleteAppDataOnUninstall": false
     }
   },
   "packageManager": "pnpm@11.2.2"
