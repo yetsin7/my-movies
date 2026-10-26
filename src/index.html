@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' file: data: blob:; style-src 'self' 'unsafe-inline'; img-src 'self' file: data: blob:; media-src 'self' file: blob:; script-src 'self';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' file: data: blob:; style-src 'self' 'unsafe-inline'; img-src 'self' file: data: blob:; media-src 'self' file: blob: http://127.0.0.1:*; script-src 'self';" />
   <title>My Movies</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -133,7 +133,10 @@
           <button id="playPause" aria-label="Reproducir o pausar">▶</button>
           <button id="backTen" aria-label="Retroceder 10 segundos">↶ <span>10</span></button>
           <button id="forwardTen" aria-label="Adelantar 10 segundos"><span>10</span> ↷</button>
-          <button id="muteButton" aria-label="Silenciar">🔊</button>
+          <div class="volume-control">
+            <button id="muteButton" aria-label="Silenciar">🔊</button>
+            <input id="volumeSlider" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volumen" />
+          </div>
           <span id="timeLabel">0:00 / 0:00</span>
         </div>
         <div class="control-right">

@@ -7,6 +7,8 @@ contextBridge.exposeInMainWorld('myMovies', {
   rescan: () => ipcRenderer.invoke('library:rescan'),
   getMediaInfo: (movieId) => ipcRenderer.invoke('movie:info', movieId),
   prepareAudio: (movieId, trackIndex) => ipcRenderer.invoke('movie:audio-compatible', movieId, trackIndex),
+  audioStreamUrl: (movieId, trackIndex, startSeconds) =>
+    ipcRenderer.invoke('movie:audio-stream-url', movieId, trackIndex, startSeconds),
   revealFile: (movieId) => ipcRenderer.invoke('movie:reveal', movieId),
   toggleFavorite: (movieId) => ipcRenderer.invoke('movie:favorite', movieId),
   setProgress: (movieId, seconds, duration) =>

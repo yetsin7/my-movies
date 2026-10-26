@@ -14,3 +14,9 @@
 .folder-remove:disabled{opacity:.5;cursor:default}
 .folder-empty{padding:18px;color:#8e9199}
 .folders-actions{margin-top:22px;display:flex;justify-content:flex-end}
+.volume-control{display:flex;align-items:center;gap:0}
+.volume-control input{width:0;opacity:0;padding:0;margin:0;accent-color:#fff;cursor:pointer;transition:width .2s ease,opacity .2s ease}
+.volume-control:hover input,.volume-control:focus-within input{width:82px;opacity:1;margin-left:8px}
+.volume-control input:focus-visible{outline:2px solid #fff;outline-offset:3px}
+/* Drag regions are decided by the OS above z-index: overlays and dialogs must opt out or the topbar swallows clicks on their top-left controls. */
+.player-overlay,dialog{-webkit-app-region:no-drag}

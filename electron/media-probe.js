@@ -39,6 +39,12 @@ function needsAudioTranscode(movie) {
   );
 }
 
+function defaultAudioTrack(movie) {
+  const tracks = movie.streams?.audio || [];
+  const defaultIndex = tracks.findIndex((track) => track.default);
+  return defaultIndex >= 0 ? defaultIndex : 0;
+}
+
 async function createAudioCompatibleCopy(movie, trackIndex, cacheDir, ffmpegPath) {
   if (!Number.isInteger(trackIndex) || trackIndex < 0 || trackIndex >= (movie.streams?.audio?.length || 0)) {
     throw new Error('Pista de audio no válida.');
@@ -58,6 +64,7 @@ async function createAudioCompatibleCopy(movie, trackIndex, cacheDir, ffmpegPath
           '-i', movie.path,
           '-map', `0:a:${trackIndex}`,
           '-vn',
+          '-ac', '2',
           '-c:a', 'aac',
           '-b:a', '256k',
           temporary
@@ -167,7 +174,8 @@ function streamSummary(streams = []) {
         layout: s.channel_layout,
         sampleRate: Number(s.sample_rate || 0),
         language: normalizeLanguage(s.tags?.language),
-        title: s.tags?.title || null
+        title: s.tags?.title || null,
+        default: Boolean(s.disposition?.default)
       })),
     subtitles: streams
       .filter((s) => s.codec_type === 'subtitle')
@@ -478,6 +486,7 @@ SUBTITLE_EXTENSIONS,
   detectHdr,
   probe,
   needsAudioTranscode,
+  defaultAudioTrack,
   createAudioCompatibleCopy,
   generateFrames,
   prepareSubtitles

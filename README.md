@@ -29,7 +29,7 @@ Aplicación de escritorio local construida con Electron para organizar y reprodu
 - Extracción automática a WebVTT de subtítulos embebidos de texto compatibles.
 - Selector de subtítulos directamente en el reproductor.
 - Selector de pista de audio cuando el motor Chromium expone múltiples pistas.
-- Conversión local a AAC de pistas de audio que Chromium no puede decodificar, manteniendo el video original y sincronizando la pista convertida.
+- Audio AC3, E-AC3 y DTS en streaming: se convierte al vuelo a AAC estéreo con volumen equilibrado, manteniendo el video original y sincronizado.
 - Avisos claros cuando un codec no puede reproducirse con el motor integrado.
 - Persistencia de biblioteca, favoritos, progreso y caché en el directorio de datos de Electron.
 - Empaquetado para Windows con electron-builder.
@@ -93,7 +93,7 @@ PNPM 11 requiere aprobar explícitamente los scripts de instalación de dependen
 
 ## Compatibilidad multimedia
 
-My Movies usa FFmpeg/FFprobe para analizar prácticamente cualquier archivo habitual de biblioteca local. Cuando Chromium no puede decodificar una pista de audio, FFmpeg crea una copia AAC ligera de esa pista en la caché local; el video continúa reproduciéndose desde el archivo original.
+My Movies usa FFmpeg/FFprobe para analizar prácticamente cualquier archivo habitual de biblioteca local. Chromium no decodifica AC3, E-AC3 ni DTS, que son los formatos habituales en películas. Para esas pistas, un servidor local en `127.0.0.1` (protegido con un token aleatorio por sesión) hace que FFmpeg las convierta al vuelo a AAC estéreo, empezando en la posición actual: el sonido llega en menos de un segundo, también tras saltar en la barra o cambiar de pista. El video continúa reproduciéndose desde el archivo original y la reproducción sigue en segundo plano si cambias de aplicación.
 
 La reproducción de video sigue dependiendo de los codecs que Chromium/Electron pueda decodificar. Por eso un MKV con HEVC puede aparecer catalogado y tener audio compatible, aunque su video aún no sea reproducible por el motor integrado.
 

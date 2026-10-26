@@ -3,7 +3,8 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 const { app, BrowserWindow, dialog, ipcMain, nativeImage, shell } = require('electron');
 const { Library } = require('./library');
-const { createAudioCompatibleCopy, needsAudioTranscode } = require('./media-probe');
+const { createAudioStreamServer } = require('./audio-stream');
+const { createAudioCompatibleCopy, defaultAudioTrack, needsAudioTranscode } = require('./media-probe');
 
 const APP_ID = 'com.mymovies.desktop';
 const WINDOW_ICON = path.join(__dirname, '..', 'src', 'assets', 'icon.png');
@@ -12,6 +13,7 @@ let mainWindow;
 let library;
 let ffmpegPath;
 let audioCacheDir;
+let audioStream;
 
 app.setAppUserModelId(APP_ID);
 
@@ -76,6 +78,7 @@ function publicMovie(movie) {
     ...movie,
     mediaUrl: asFileUrl(movie.path),
     requiresAudioTranscode: needsAudioTranscode(movie),
+    defaultAudioTrack: defaultAudioTrack(movie),
     frames: (movie.frames || []).map(asFileUrl),
     playableSubtitles: (movie.playableSubtitles || []).map((sub) => ({
       ...sub,
@@ -156,6 +159,11 @@ app.whenReady().then(async () => {
   const userData = app.getPath('userData');
   ffmpegPath = getFfmpegPath();
   audioCacheDir = path.join(userData, 'audio-cache');
+  audioStream = createAudioStreamServer({
+    findMovie: (id) => library?.find(id) || null,
+    getFfmpegPath: () => ffmpegPath
+  });
+  await audioStream.start();
   library = new Library({
     configPath: path.join(userData, 'library.json'),
     cacheDir: path.join(userData, 'preview-cache'),
@@ -173,7 +181,9 @@ app.whenReady().then(async () => {
   }
 });
 
-app.on('window-all-closed', () => {
+app.on('will-quit', () => audioStream?.stop());
+
+app.on('window-all-closed',() => {
   if (process.platform !== 'darwin') app.quit();
 });
 
@@ -208,7 +218,16 @@ ipcMain.handle('library:remove-folder', async (_event, folder) => {
 
 ipcMain.handle('movie:info',(_event, id) => publicMovie(library.find(id)));
 
-ipcMain.handle('movie:audio-compatible', async (_event, id, trackIndex) => {
+ipcMain.handle('movie:audio-stream-url', (_event, id, trackIndex, startSeconds) => {
+  const movie = typeof id === 'string' && /^[a-f0-9]{40}$/.test(id) ? library.find(id) : null;
+  if (!movie) throw new Error('La película ya no está en la biblioteca.');
+  if (!Number.isInteger(trackIndex) || trackIndex < 0 || trackIndex >= (movie.streams?.audio?.length || 0)) {
+    throw new Error('Pista de audio no válida.');
+  }
+  return audioStream.urlFor(id, trackIndex, Number(startSeconds) || 0);
+});
+
+ipcMain.handle('movie:audio-compatible',async (_event, id, trackIndex) => {
   if (typeof id !== 'string' || !/^[a-f0-9]{40}$/.test(id)) {
     throw new Error('Identificador de película no válido.');
   }
