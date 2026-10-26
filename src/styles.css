@@ -20,3 +20,9 @@
 .volume-control input:focus-visible{outline:2px solid #fff;outline-offset:3px}
 /* Drag regions are decided by the OS above z-index: overlays and dialogs must opt out or the topbar swallows clicks on their top-left controls. */
 .player-overlay,dialog{-webkit-app-region:no-drag}
+/* The OS draws the window controls over the top-right corner: keep the topbar actions clear of them. */
+.topbar{padding-right:max(4vw,calc(100vw - env(titlebar-area-x,0px) - env(titlebar-area-width,100vw) + 16px))}
+/* Dialogs: keep clear of the OS window controls, fit short windows and keep the close button reachable while scrolling. */
+.details-dialog{max-height:calc(100vh - 112px);overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#3a3d46 transparent}
+.details-dialog .dialog-close{position:sticky;float:right;top:16px;margin:16px 16px 0 0}
+.details-backdrop{height:clamp(220px,34vh,430px)}
