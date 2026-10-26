@@ -25,7 +25,7 @@
         <kbd>Ctrl K</kbd>
       </label>
       <button id="rescanButton" class="icon-button" title="Volver a analizar" aria-label="Volver a analizar">↻</button>
-      <button id="libraryButton" class="primary small">＋ Carpetas</button>
+      <button id="libraryButton" class="primary small">Carpetas</button>
     </div>
   </header>
 
@@ -97,6 +97,19 @@
         <div><strong>Archivo</strong><span id="formatInfo"></span></div>
       </div>
       <button id="revealButton" class="text-button">Abrir ubicación en el Explorador →</button>
+    </div>
+  </dialog>
+
+  <dialog id="foldersDialog" class="details-dialog folders-dialog">
+    <button class="dialog-close" data-close-folders aria-label="Cerrar">×</button>
+    <div class="folders-content">
+      <span class="section-kicker">TU BIBLIOTECA</span>
+      <h2>Carpetas</h2>
+      <p class="muted">Solo se analizan las carpetas de esta lista. Quitar una carpeta no borra tus archivos.</p>
+      <ul id="folderList" class="folder-list"></ul>
+      <div class="folders-actions">
+        <button id="addFolderButton" class="primary" autofocus>＋ Añadir carpeta</button>
+      </div>
     </div>
   </dialog>
 

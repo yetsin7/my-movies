@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('myMovies', {
   chooseLibrary: () => ipcRenderer.invoke('library:choose'),
   getState: () => ipcRenderer.invoke('library:state'),
+  removeFolder: (folder) => ipcRenderer.invoke('library:remove-folder', folder),
   rescan: () => ipcRenderer.invoke('library:rescan'),
   getMediaInfo: (movieId) => ipcRenderer.invoke('movie:info', movieId),
   revealFile: (movieId) => ipcRenderer.invoke('movie:reveal', movieId),

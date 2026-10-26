@@ -9,6 +9,7 @@ Aplicación de escritorio local construida con Electron para organizar y reprodu
 ## Funciones actuales
 
 - Selección acumulativa de una o varias carpetas desde Windows. Solo se analizan las carpetas que tú elijas; nada se importa automáticamente.
+- Gestión de carpetas desde el botón «Carpetas»: lista, añade y quita carpetas. Quitar una carpeta no borra archivos; se conservan las películas que otra carpeta de la lista siga cubriendo, además de favoritos y progreso.
 - Escaneo recursivo de videos en segundo plano: las películas aparecen a medida que se analizan, con progreso visible.
 - Una sola instancia de la aplicación a la vez.
 - Escaneo recursivo de videos.

@@ -51,6 +51,29 @@ async function walk(root) {
 }
 
 /**
+ * Normalizes a path for case-insensitive comparison (Windows file systems).
+ * @param {string} value Path to normalize.
+ * @returns {string} Absolute lowercase path.
+ */
+function normalizePath(value) {
+  return path.resolve(value).toLowerCase();
+}
+
+/**
+ * Tells whether a file lives inside any of the given folders.
+ * @param {string} file Absolute file path.
+ * @param {string[]} folders Folder paths.
+ * @returns {boolean} True when at least one folder contains the file.
+ */
+function isInsideAny(file, folders) {
+  const target = normalizePath(file);
+  return folders.some((folder) => {
+    const root = normalizePath(folder);
+    return target === root || target.startsWith(root.endsWith(path.sep) ? root : root + path.sep);
+  });
+}
+
+/**
  * Manages the movie library state, folder discovery, and video indexing.
  */
 class Library {
@@ -117,6 +140,24 @@ class Library {
   async setFolders(folders) {
     this.state.folders = [...new Set(folders)];
     await this.save();
+    return this.state;
+  }
+
+  /**
+   * Removes a folder from the library and drops the movies only it provided.
+   * Files on disk are never touched; favorites and progress are kept in case
+   * the folder is added again.
+   * @param {string} folder Folder path as stored in state.folders.
+   * @returns {Promise<object>} Updated library state.
+   */
+  async removeFolder(folder) {
+    const target = normalizePath(folder);
+    this.state.folders = this.state.folders.filter((item) => normalizePath(item) !== target);
+    this.state.movies = this.state.movies.filter((movie) => isInsideAny(movie.path, this.state.folders));
+    // A scan already walking the removed folder could re-add its movies; queue a pass that prunes them.
+    if (this.scanPromise) this.rescanQueued = true;
+    await this.save();
+    this.onUpdate();
     return this.state;
   }
 

@@ -195,7 +195,12 @@ ipcMain.handle('library:rescan', () => {
   return publicState();
 });
 
-ipcMain.handle('movie:info', (_event, id) => publicMovie(library.find(id)));
+ipcMain.handle('library:remove-folder', async (_event, folder) => {
+  if (typeof folder === 'string' && folder) await library.removeFolder(folder);
+  return publicState();
+});
+
+ipcMain.handle('movie:info',(_event, id) => publicMovie(library.find(id)));
 
 ipcMain.handle('movie:reveal', (_event, id) => {
   const movie = library.find(id);
