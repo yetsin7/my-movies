@@ -29,6 +29,7 @@ Aplicación de escritorio local construida con Electron para organizar y reprodu
 - Extracción automática a WebVTT de subtítulos embebidos de texto compatibles.
 - Selector de subtítulos directamente en el reproductor.
 - Selector de pista de audio cuando el motor Chromium expone múltiples pistas.
+- Conversión local a AAC de pistas de audio que Chromium no puede decodificar, manteniendo el video original y sincronizando la pista convertida.
 - Avisos claros cuando un codec no puede reproducirse con el motor integrado.
 - Persistencia de biblioteca, favoritos, progreso y caché en el directorio de datos de Electron.
 - Empaquetado para Windows con electron-builder.
@@ -92,9 +93,9 @@ PNPM 11 requiere aprobar explícitamente los scripts de instalación de dependen
 
 ## Compatibilidad multimedia
 
-My Movies usa FFmpeg/FFprobe para analizar prácticamente cualquier archivo habitual de biblioteca local, aunque la reproducción final integrada sigue dependiendo del conjunto de codecs que Chromium/Electron pueda decodificar.
+My Movies usa FFmpeg/FFprobe para analizar prácticamente cualquier archivo habitual de biblioteca local. Cuando Chromium no puede decodificar una pista de audio, FFmpeg crea una copia AAC ligera de esa pista en la caché local; el video continúa reproduciéndose desde el archivo original.
 
-Por eso un MKV puede aparecer perfectamente catalogado, con miniaturas, pistas y subtítulos, aunque una combinación concreta como HEVC + TrueHD + PGS no sea reproducible aún por el motor integrado.
+La reproducción de video sigue dependiendo de los codecs que Chromium/Electron pueda decodificar. Por eso un MKV con HEVC puede aparecer catalogado y tener audio compatible, aunque su video aún no sea reproducible por el motor integrado.
 
 La arquitectura está preparada para una futura capa de reproducción nativa basada en MPV/FFmpeg para ampliar la compatibilidad de codecs sin degradar la interfaz Electron.
 

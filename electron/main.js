@@ -3,12 +3,15 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 const { app, BrowserWindow, dialog, ipcMain, nativeImage, shell } = require('electron');
 const { Library } = require('./library');
+const { createAudioCompatibleCopy, needsAudioTranscode } = require('./media-probe');
 
 const APP_ID = 'com.mymovies.desktop';
 const WINDOW_ICON = path.join(__dirname, '..', 'src', 'assets', 'icon.png');
 
 let mainWindow;
 let library;
+let ffmpegPath;
+let audioCacheDir;
 
 app.setAppUserModelId(APP_ID);
 
@@ -72,6 +75,7 @@ function publicMovie(movie) {
   return {
     ...movie,
     mediaUrl: asFileUrl(movie.path),
+    requiresAudioTranscode: needsAudioTranscode(movie),
     frames: (movie.frames || []).map(asFileUrl),
     playableSubtitles: (movie.playableSubtitles || []).map((sub) => ({
       ...sub,
@@ -150,10 +154,12 @@ async function createWindow() {
 app.whenReady().then(async () => {
   if (!hasInstanceLock) return;
   const userData = app.getPath('userData');
+  ffmpegPath = getFfmpegPath();
+  audioCacheDir = path.join(userData, 'audio-cache');
   library = new Library({
     configPath: path.join(userData, 'library.json'),
     cacheDir: path.join(userData, 'preview-cache'),
-    ffmpegPath: getFfmpegPath(),
+    ffmpegPath,
     ffprobePath: getFfprobePath(),
     onProgress: (payload) => mainWindow?.webContents.send('library:scan-progress', payload),
     onUpdate: scheduleLibraryUpdate
@@ -201,6 +207,16 @@ ipcMain.handle('library:remove-folder', async (_event, folder) => {
 });
 
 ipcMain.handle('movie:info',(_event, id) => publicMovie(library.find(id)));
+
+ipcMain.handle('movie:audio-compatible', async (_event, id, trackIndex) => {
+  if (typeof id !== 'string' || !/^[a-f0-9]{40}$/.test(id)) {
+    throw new Error('Identificador de película no válido.');
+  }
+  const movie = library.find(id);
+  if (!movie) throw new Error('La película ya no está en la biblioteca.');
+  if (!needsAudioTranscode(movie)) throw new Error('Esta película no requiere conversión de audio.');
+  return asFileUrl(await createAudioCompatibleCopy(movie, trackIndex, audioCacheDir, ffmpegPath));
+});
 
 ipcMain.handle('movie:reveal', (_event, id) => {
   const movie = library.find(id);

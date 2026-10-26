@@ -29,6 +29,56 @@ function run(binary, args) {
   });
 }
 
+const AUDIO_CODECS_SUPPORTED_BY_CHROMIUM = new Set(['aac', 'mp3', 'opus', 'vorbis', 'flac']);
+const audioCopyPromises = new Map();
+
+function needsAudioTranscode(movie) {
+  const audio = movie.streams?.audio || [];
+  return audio.length > 0 && audio.some((track) =>
+    !AUDIO_CODECS_SUPPORTED_BY_CHROMIUM.has(String(track.codec || '').toLowerCase())
+  );
+}
+
+async function createAudioCompatibleCopy(movie, trackIndex, cacheDir, ffmpegPath) {
+  if (!Number.isInteger(trackIndex) || trackIndex < 0 || trackIndex >= (movie.streams?.audio?.length || 0)) {
+    throw new Error('Pista de audio no válida.');
+  }
+  const stat = await fsp.stat(movie.path);
+  const output = path.join(cacheDir, `${movie.id}-${stat.size}-${Math.floor(stat.mtimeMs)}-${trackIndex}.m4a`);
+  if (await fsp.access(output).then(() => true, () => false)) return output;
+
+  let conversion = audioCopyPromises.get(output);
+  if (!conversion) {
+    conversion = (async () => {
+      await fsp.mkdir(cacheDir, { recursive: true });
+      const temporary = output.replace(/\.m4a$/, '.tmp.m4a');
+      try {
+        await run(ffmpegPath, [
+          '-hide_banner', '-loglevel', 'error', '-y',
+          '-i', movie.path,
+          '-map', `0:a:${trackIndex}`,
+          '-vn',
+          '-c:a', 'aac',
+          '-b:a', '256k',
+          temporary
+        ]);
+        await fsp.rename(temporary, output);
+      } catch (error) {
+        await fsp.unlink(temporary).catch(() => {});
+        throw new Error(`No se pudo preparar el audio compatible: ${error.message}`);
+      }
+    })();
+    audioCopyPromises.set(output, conversion);
+  }
+
+  try {
+    await conversion;
+    return output;
+  } finally {
+    if (audioCopyPromises.get(output) === conversion) audioCopyPromises.delete(output);
+  }
+}
+
 /**
  * Cleans movie filenames into readable display titles.
  * @param {string} filename File path or file name.
@@ -427,6 +477,8 @@ SUBTITLE_EXTENSIONS,
   detectYear,
   detectHdr,
   probe,
+  needsAudioTranscode,
+  createAudioCompatibleCopy,
   generateFrames,
   prepareSubtitles
 };
