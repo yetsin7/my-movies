@@ -101,13 +101,19 @@ La arquitectura está preparada para una futura capa de reproducción nativa bas
 
 ## Privacidad
 
-La biblioteca permanece local. My Movies no sube archivos, títulos, rutas, historial ni miniaturas a servicios externos.
+La biblioteca permanece local. My Movies no sube archivos, títulos, rutas, historial ni miniaturas a servicios externos. El servidor de audio escucha únicamente en `127.0.0.1`, en un puerto aleatorio y con un token distinto en cada sesión.
 
 ## Arquitectura
 
 - `electron/main.js`: ventana, IPC, selección de carpetas y exposición segura de medios.
 - `electron/library.js`: escaneo incremental, FFprobe, miniaturas, HDR, preparación de subtítulos y persistencia.
+- `electron/media-probe.js`: FFprobe, miniaturas, subtítulos y detección de formatos.
+- `electron/audio-stream.js`: servidor local que convierte al vuelo el audio AC3/E-AC3/DTS a AAC estéreo.
 - `electron/preload.js`: puente seguro entre Electron y el renderer.
 - `src/index.html`: estructura de la experiencia.
 - `src/styles.css`: sistema visual premium.
 - `src/renderer.js`: biblioteca, navegación, player, subtítulos, audio y estados interactivos.
+
+## Licencia
+
+MIT. Consulta el archivo [LICENSE](LICENSE). FFmpeg y FFprobe no se distribuyen con My Movies: se usan los que tengas instalados en tu equipo, bajo sus propias licencias.

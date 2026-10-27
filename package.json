@@ -1,10 +1,25 @@
 {
   "name": "my-movies",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Local cinematic media library and player built with Electron.",
   "main": "electron/main.js",
   "author": "yetsin7",
   "license": "MIT",
+  "homepage": "https://github.com/yetsin7/my-movies#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yetsin7/my-movies.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yetsin7/my-movies/issues"
+  },
+  "keywords": [
+    "electron",
+    "media-library",
+    "video-player",
+    "movies",
+    "local-first"
+  ],
   "private": true,
   "scripts": {
     "start": "electron .",
