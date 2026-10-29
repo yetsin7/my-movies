@@ -18,6 +18,11 @@ contextBridge.exposeInMainWorld('myMovies', {
     ipcRenderer.on('library:updated', handler);
     return () => ipcRenderer.removeListener('library:updated', handler);
   },
+  onOpenExternal: (callback) => {
+    const handler = (_event, movie) => callback(movie);
+    ipcRenderer.on('player:open-external', handler);
+    return () => ipcRenderer.removeListener('player:open-external', handler);
+  },
   onScanProgress: (callback) => {
     const handler = (_event, payload) => callback(payload);
     ipcRenderer.on('library:scan-progress', handler);

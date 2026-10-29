@@ -1,6 +1,6 @@
 {
   "name": "my-movies",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Local cinematic media library and player built with Electron.",
   "main": "electron/main.js",
   "author": "yetsin7",
@@ -73,7 +73,107 @@
       "uninstallerSidebar": "build/installerSidebar.bmp",
       "language": "3082",
       "deleteAppDataOnUninstall": false
-    }
+    },
+    "fileAssociations": [
+      {
+        "ext": "mp4",
+        "name": "Video MP4",
+        "description": "Video (MP4)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "mkv",
+        "name": "Video MKV",
+        "description": "Video (MKV)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "mov",
+        "name": "Video MOV",
+        "description": "Video (MOV)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "m4v",
+        "name": "Video M4V",
+        "description": "Video (M4V)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "avi",
+        "name": "Video AVI",
+        "description": "Video (AVI)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "webm",
+        "name": "Video WEBM",
+        "description": "Video (WEBM)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "wmv",
+        "name": "Video WMV",
+        "description": "Video (WMV)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "flv",
+        "name": "Video FLV",
+        "description": "Video (FLV)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "mpeg",
+        "name": "Video MPEG",
+        "description": "Video (MPEG)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "mpg",
+        "name": "Video MPG",
+        "description": "Video (MPG)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "ts",
+        "name": "Video TS",
+        "description": "Video (TS)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "m2ts",
+        "name": "Video M2TS",
+        "description": "Video (M2TS)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "mts",
+        "name": "Video MTS",
+        "description": "Video (MTS)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      },
+      {
+        "ext": "ogv",
+        "name": "Video OGV",
+        "description": "Video (OGV)",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      }
+    ]
   },
   "packageManager": "pnpm@11.2.2"
 }

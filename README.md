@@ -32,6 +32,7 @@ Aplicación de escritorio local construida con Electron para organizar y reprodu
 - Audio AC3, E-AC3 y DTS en streaming: se convierte al vuelo a AAC estéreo con volumen equilibrado, manteniendo el video original y sincronizado.
 - Avisos claros cuando un codec no puede reproducirse con el motor integrado.
 - Persistencia de biblioteca, favoritos, progreso y caché en el directorio de datos de Electron.
+- «Abrir con My Movies»: clic derecho sobre cualquier video (MP4, MKV, AVI…) → *Abrir con* → My Movies, o doble clic tras elegirla como predeterminada. El video se reproduce al instante sin añadirlo a tu biblioteca.
 - Empaquetado para Windows con electron-builder.
 
 ## Ejecutar en Windows con PNPM

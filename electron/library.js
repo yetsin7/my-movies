@@ -96,6 +96,7 @@ class Library {
     this.onUpdate = onUpdate || (() => {});
     this.scanPromise = null;
     this.rescanQueued = false;
+    this.external = new Map();
     this.state = {
       folders: [],
       movies: [],
@@ -292,7 +293,51 @@ class Library {
    * @returns {object|null} Movie object if found.
    */
   find(id) {
-    return this.state.movies.find((movie) => movie.id === id) || null;
+    return this.state.movies.find((movie) => movie.id === id) || this.external.get(id) || null;
+  }
+
+  /**
+   * Prepares a single video opened from outside the library (Explorer's
+   * "Open with", drag onto the exe, command line). It is played and its
+   * progress is remembered, but it is not added to the library or its folders.
+   * @param {string} filePath Absolute path of the video.
+   * @returns {Promise<object|null>} Movie ready to play, or null if unreadable.
+   */
+  async openExternal(filePath) {
+    const resolved = path.resolve(filePath);
+    const stat = await fsp.stat(resolved).catch(() => null);
+    if (!stat || !stat.isFile() || !VIDEO_EXTENSIONS.has(path.extname(resolved).toLowerCase())) return null;
+
+    const id = hash(resolved.toLowerCase());
+    const known = this.state.movies.find((movie) => movie.id === id);
+    if (known) return known;
+
+    const info = await probe(resolved, this.ffprobePath);
+    const title = resolveTitle(info.tags?.title, resolved);
+    const movie = {
+      id,
+      path: resolved,
+      title,
+      filename: path.basename(resolved),
+      folder: path.dirname(resolved),
+      extension: path.extname(resolved).toLowerCase(),
+      modifiedAt: stat.mtimeMs,
+      fileSizeOnDisk: stat.size,
+      duration: info.duration,
+      size: info.size || stat.size,
+      bitrate: info.bitrate,
+      format: info.format,
+      streams: info.streams,
+      hdr: info.hdr,
+      year: detectYear(title, path.basename(resolved)),
+      favorite: Boolean(this.state.favorites[id]),
+      progress: this.state.progress[id] || null,
+      frames: [],
+      playableSubtitles: []
+    };
+    movie.playableSubtitles = await prepareSubtitles(movie, this.cacheDir, this.ffmpegPath);
+    this.external.set(id, movie);
+    return movie;
   }
 
   /**

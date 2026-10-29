@@ -4,7 +4,7 @@ const { pathToFileURL } = require('url');
 const { app, BrowserWindow, dialog, ipcMain, nativeImage, shell } = require('electron');
 const { Library } = require('./library');
 const { createAudioStreamServer } = require('./audio-stream');
-const { createAudioCompatibleCopy, defaultAudioTrack, needsAudioTranscode } = require('./media-probe');
+const { VIDEO_EXTENSIONS, createAudioCompatibleCopy, defaultAudioTrack, needsAudioTranscode } = require('./media-probe');
 
 const APP_ID = 'com.mymovies.desktop';
 const WINDOW_ICON = path.join(__dirname, '..', 'src', 'assets', 'icon.png');
@@ -22,11 +22,42 @@ const hasInstanceLock = app.requestSingleInstanceLock();
 if (!hasInstanceLock) {
   app.quit();
 } else {
-  app.on('second-instance', () => {
-    if (!mainWindow) return;
-    if (mainWindow.isMinimized()) mainWindow.restore();
-    mainWindow.focus();
+  app.on('second-instance', (_event, argv) => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+    openFromArgs(argv);
   });
+}
+
+// A video handed to us by the OS ("Open with", double click, drag onto the exe).
+let pendingOpenPath = null;
+
+function videoPathFromArgs(argv) {
+  return argv.slice(app.isPackaged ? 1 : 2).find((arg) =>
+    !arg.startsWith('-') && VIDEO_EXTENSIONS.has(path.extname(arg).toLowerCase()) && fs.existsSync(arg)
+  ) || null;
+}
+
+async function openFromArgs(argv) {
+  const filePath = videoPathFromArgs(argv);
+  if (!filePath) return;
+  // Window or library not ready yet: createWindow flushes this after load.
+  if (!library || !mainWindow || mainWindow.webContents.isLoading()) {
+    pendingOpenPath = filePath;
+    return;
+  }
+  await sendExternalMovie(filePath);
+}
+
+async function sendExternalMovie(filePath) {
+  try {
+    const movie = await library.openExternal(filePath);
+    if (movie) mainWindow?.webContents.send('player:open-external', publicMovie(movie));
+  } catch (error) {
+    console.error('Could not open external video:', error);
+  }
 }
 
 function getFfmpegPath() {
@@ -152,10 +183,16 @@ async function createWindow() {
 
   mainWindow.once('ready-to-show', () => mainWindow.show());
   await mainWindow.loadFile(path.join(__dirname, '..', 'src', 'index.html'));
+  if (pendingOpenPath) {
+    const filePath = pendingOpenPath;
+    pendingOpenPath = null;
+    await sendExternalMovie(filePath);
+  }
 }
 
 app.whenReady().then(async () => {
   if (!hasInstanceLock) return;
+  pendingOpenPath = videoPathFromArgs(process.argv);
   const userData = app.getPath('userData');
   ffmpegPath = getFfmpegPath();
   audioCacheDir = path.join(userData, 'audio-cache');

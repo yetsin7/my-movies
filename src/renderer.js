@@ -208,5 +208,6 @@ let hideControlsTimer;playerOverlay.addEventListener('mousemove',()=>{playerOver
 window.addEventListener('scroll',()=>{$('topbar').classList.toggle('scrolled',window.scrollY>24)},{passive:true});
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('searchInput').focus();$('searchInput').select();return}if(playerOverlay.classList.contains('hidden'))return;if(e.key==='Escape'&&!document.fullscreenElement)closePlayer();if(e.code==='Space'){e.preventDefault();if(videoPlayer.paused)videoPlayer.play();else{state.wantPlaying=false;videoPlayer.pause()}}if(e.key==='ArrowLeft')videoPlayer.currentTime=Math.max(0,videoPlayer.currentTime-10);if(e.key==='ArrowRight')videoPlayer.currentTime=Math.min(videoPlayer.duration||Infinity,videoPlayer.currentTime+10)});
 window.myMovies.onLibraryUpdated(setData);
+window.myMovies.onOpenExternal(movie=>playMovie(movie));
 window.myMovies.onScanProgress(p=>{const status=$('scanStatus');state.scanning=!p.complete;status.classList.remove('hidden');status.textContent=p.complete?'✓ Biblioteca actualizada':!p.total?'Buscando videos…':(p.cached?'Comprobando ':'Analizando ')+p.done+' / '+p.total+(p.title?' · '+p.title:'');if(p.complete){window.myMovies.getState().then(setData);setTimeout(()=>status.classList.add('hidden'),1800)}});
 window.myMovies.getState().then(setData);
