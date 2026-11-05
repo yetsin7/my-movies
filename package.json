@@ -1,7 +1,7 @@
 {
-  "name": "my-movies",
+  "name": "mau-movies",
   "version": "0.3.0",
-  "description": "Local cinematic media library and player built with Electron.",
+  "description": "Mau Movies — biblioteca y reproductor local de películas.",
   "main": "electron/main.js",
   "author": "yetsin7",
   "license": "MIT",
@@ -34,8 +34,8 @@
     "electron-builder": "26.15.3"
   },
   "build": {
-    "appId": "com.mymovies.desktop",
-    "productName": "My Movies",
+    "appId": "com.mau.movies",
+    "productName": "Mau Movies",
     "directories": {
       "output": "dist"
     },
@@ -64,8 +64,8 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "My Movies",
-      "uninstallDisplayName": "My Movies",
+      "shortcutName": "Mau Movies",
+      "uninstallDisplayName": "Mau Movies",
       "installerIcon": "build/icon.ico",
       "uninstallerIcon": "build/icon.ico",
       "installerHeaderIcon": "build/icon.ico",
