@@ -115,6 +115,9 @@
 
   <section id="playerOverlay" class="player-overlay hidden">
     <video id="videoPlayer" playsinline></video>
+    <div id="playerFeedback" class="player-feedback hidden" aria-hidden="true">
+      <span id="feedbackIcon" class="feedback-icon">▶</span>
+    </div>
     <div id="playerShade" class="player-shade"></div>
     <div id="playbackNotice" class="playback-notice hidden"></div>
     <div class="player-top">
@@ -149,6 +152,8 @@
     </div>
   </section>
 
+  <script src="./i18n.js"></script>
+  <script src="./player-context-menu.js"></script>
   <script src="./renderer.js"></script>
 </body>
 </html>
